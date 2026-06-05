@@ -3,215 +3,479 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Giverny — Nuestro Atelier</title>
+<title>Galerie Giverny</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cormorant+SC:wght@300;400;500;600&family=Italianno&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+SC:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Marcellus&family=Pinyon+Script&display=swap" rel="stylesheet">
 <style>
   :root{
-    --agua:#88b4d6;
-    --agua-prof:#3d6b8a;
+    --pared:#efe4cb;
+    --pared-clara:#f7eed8;
+    --pared-oscura:#d8c8a8;
+    --bronce-osc:#7a5a2a;
+    --bronce:#b8924a;
+    --bronce-cl:#dcb868;
+    --agua:#4a7a9a;
+    --agua-prof:#2a4e6a;
     --jardin:#5a7a4a;
-    --jardin-prof:#2f4a3a;
-    --lavanda:#c5b8d8;
-    --salvia:#bcc9a8;
-    --crema:#f5ecd9;
-    --crema-claro:#fbf6e8;
-    --rosa:#e8b8c4;
-    --dorado:#c69a4a;
-    --tinta:#283f3a;
-    --niebla:rgba(251,246,232,0.88);
+    --lavanda:#a895c2;
+    --rosa-ant:#c98a8a;
+    --rosa-cl:#e8b8c4;
+    --tinta:#2a3038;
+    --tinta-cl:#3e4a55;
+    --niebla:rgba(247,238,216,0.94);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden}
   body{
-    font-family:'Cormorant Garamond',Georgia,serif;
-    color:var(--tinta);
-    background:#1a2535;
-    -webkit-font-smoothing:antialiased;
+    font-family:'EB Garamond',Georgia,serif;color:var(--tinta);
+    background:#1a1f25;-webkit-font-smoothing:antialiased;
   }
-  .canvas-grain{
-    position:fixed;inset:0;pointer-events:none;z-index:200;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.92  0 0 0 0 0.85  0 0 0 0.18 0'/></filter><rect width='220' height='220' filter='url(%23n)' opacity='0.55'/></svg>");
-    mix-blend-mode:overlay;opacity:.35;
+  /* textura de lienzo global */
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:400;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.88  0 0 0 0 0.78  0 0 0 0.15 0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.6'/></svg>");
+    mix-blend-mode:overlay;opacity:.45;
   }
+
+  /* ============ LOGIN ============ */
   #login{
     position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    background:#1a2535;z-index:100;transition:opacity 1.4s ease;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 30%, #f0e3c8 0%, #d8c4a0 60%, #b89c70 100%);
+    z-index:100;transition:opacity 1.4s ease;overflow:hidden;padding:2rem;
   }
   #login.gone{opacity:0;pointer-events:none}
-  .bg-static, .bg-water{
+
+  /* pared con vetas */
+  #login::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, transparent 0, transparent 80px, rgba(180,140,80,0.04) 80px, rgba(180,140,80,0.04) 81px),
+      radial-gradient(ellipse at 50% 100%, rgba(80,50,20,0.25) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  .painting{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .frame-outer{
+    position:relative;width:min(90vw,1100px);height:min(85vh,720px);
+    background:linear-gradient(135deg,#a87838 0%,#dcb868 30%,#8a5e22 70%,#c69850 100%);
+    padding:28px;border-radius:4px;
+    box-shadow:
+      0 50px 110px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(60,40,20,0.5),
+      inset 0 0 0 2px rgba(255,235,180,0.4),
+      inset 0 0 30px rgba(60,40,20,0.4);
+  }
+  .frame-inner{
+    position:relative;width:100%;height:100%;
+    background:#1a2535;overflow:hidden;
+    box-shadow:inset 0 0 50px rgba(0,0,0,0.7);
+  }
+  .bg-static,.bg-water{
     position:absolute;inset:0;background-size:cover;background-position:center;
   }
-  #login .bg-static{
-    background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Claude_Monet_-_The_Water_Lily_Pond_-_Google_Art_Project.jpg/1600px-Claude_Monet_-_The_Water_Lily_Pond_-_Google_Art_Project.jpg');
-    animation:burns 35s ease-in-out infinite alternate;
+  .bg-static{
+    background-image:
+      url('puente.jpg'),
+      radial-gradient(ellipse at 30% 100%, rgba(90,130,160,0.7) 0%, transparent 65%),
+      radial-gradient(ellipse at 70% 20%, rgba(180,200,150,0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #6a8a6a 0%, #5a7a6a 35%, #4a6a8a 55%, #2a4a5a 100%);
+    animation:burns 40s ease-in-out infinite alternate;
   }
-  #login .bg-water{
-    background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Claude_Monet_-_The_Water_Lily_Pond_-_Google_Art_Project.jpg/1600px-Claude_Monet_-_The_Water_Lily_Pond_-_Google_Art_Project.jpg');
-    animation:burns 35s ease-in-out infinite alternate;
-    -webkit-mask-image:linear-gradient(to bottom, transparent 50%, black 70%);
-            mask-image:linear-gradient(to bottom, transparent 50%, black 70%);
+  .bg-water{
+    background-image:
+      url('puente.jpg'),
+      radial-gradient(ellipse at 30% 100%, rgba(90,130,160,0.7) 0%, transparent 65%),
+      radial-gradient(ellipse at 70% 20%, rgba(180,200,150,0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #6a8a6a 0%, #5a7a6a 35%, #4a6a8a 55%, #2a4a5a 100%);
+    animation:burns 40s ease-in-out infinite alternate;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 48%,black 68%);
+            mask-image:linear-gradient(to bottom,transparent 48%,black 68%);
     filter:url(#waterShimmer);
   }
-  #login::after{
-    content:"";position:absolute;inset:0;z-index:1;
-    background:radial-gradient(ellipse at center, transparent 30%, rgba(20,30,40,0.55) 90%);
+  .frame-inner::after{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 35%, rgba(20,25,35,0.5) 100%);
   }
-  @keyframes burns{
-    0%{transform:scale(1) translate(0,0)}
-    100%{transform:scale(1.1) translate(-1.5%,-1%)}
+
+  /* Placa del museo */
+  .placa{
+    position:absolute;left:50%;bottom:3vh;transform:translateX(-50%);
+    background:linear-gradient(180deg,#3a3026 0%,#1f1a14 100%);
+    color:#dcb868;padding:.85rem 2.2rem;
+    font-family:'Cormorant SC',serif;font-size:.78rem;letter-spacing:.32em;
+    text-align:center;line-height:1.7;
+    box-shadow:0 12px 30px rgba(0,0,0,0.5),inset 0 1px 0 rgba(220,184,104,0.5);
+    border:1px solid rgba(220,184,104,0.35);z-index:5;
   }
+  .placa em{font-style:italic;font-family:'EB Garamond',serif;color:#e8c98a;letter-spacing:.14em;text-transform:none;font-size:1rem}
+
+  /* Tarjeta del centro (la propuesta) */
   .card{
-    position:relative;z-index:3;
-    background:var(--niebla);backdrop-filter:blur(10px);
-    padding:3.5rem 3rem;border-radius:3px;
-    box-shadow:0 30px 80px rgba(0,0,0,0.45),0 0 0 1px rgba(198,154,74,0.35),inset 0 0 60px rgba(245,236,217,0.4);
-    text-align:center;max-width:430px;width:90%;
-    animation:floatIn 1.6s cubic-bezier(.2,.8,.2,1) both;
+    position:absolute;z-index:6;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    background:var(--niebla);backdrop-filter:blur(14px) saturate(1.1);
+    padding:2.6rem 3.2rem 2.4rem;border-radius:2px;
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(122,90,42,0.4),
+      0 0 0 8px rgba(247,238,216,0.18),
+      inset 0 0 80px rgba(232,200,138,0.18);
+    text-align:center;max-width:460px;width:90%;
+    animation:floatIn 2s cubic-bezier(.2,.8,.2,1) both .4s;
   }
-  @keyframes floatIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
-  .card h1{
-    font-family:'Italianno',cursive;font-weight:400;font-size:4.2rem;
-    color:var(--agua-prof);margin-bottom:.2rem;line-height:.9;
+  @keyframes floatIn{
+    from{opacity:0;transform:translate(-50%,-45%) scale(0.96)}
+    to{opacity:1;transform:translate(-50%,-50%) scale(1)}
   }
-  .card .sigla{
-    font-family:'Cormorant SC',serif;font-size:.85rem;letter-spacing:.5em;
-    color:var(--dorado);padding-left:.5em;margin-bottom:.4rem;
+
+  .card .sigla-top{
+    font-family:'Cormorant SC',serif;font-size:.72rem;letter-spacing:.42em;
+    color:var(--bronce-osc);margin-bottom:1.1rem;padding-left:.42em;
   }
+  .card .sigla-top::before, .card .sigla-top::after{
+    content:"—";margin:0 .8em;color:var(--bronce);
+  }
+  .proposal{
+    font-family:'Pinyon Script',cursive;font-weight:400;
+    font-size:clamp(2.8rem,5vw,4.4rem);line-height:1;
+    color:var(--agua-prof);
+    margin:.2rem 0 .6rem;
+    text-shadow:0 1px 2px rgba(74,122,154,0.18);
+  }
+  .proposal .acc{color:var(--bronce-osc)}
   .card .ornament{
-    color:var(--dorado);font-size:1.1rem;letter-spacing:1.2em;
-    margin:.4rem 0 1.3rem;padding-left:1.2em;
+    color:var(--bronce);font-size:.95rem;letter-spacing:.6em;
+    margin:.6rem 0 1.2rem;padding-left:.6em;
   }
-  .card p.lead{font-style:italic;font-size:1.1rem;color:var(--tinta);opacity:.78;margin-bottom:2rem;line-height:1.5}
-  .card p.lead .sig{display:block;font-size:.85rem;letter-spacing:.18em;margin-top:.5rem;font-style:normal;opacity:.6}
-  .field{position:relative;margin-bottom:1.2rem}
+  .card .hint{
+    font-family:'EB Garamond',serif;font-style:italic;font-size:.92rem;
+    color:var(--tinta-cl);opacity:.7;margin-bottom:1rem;letter-spacing:.04em;
+  }
+  .field{position:relative;margin-bottom:1.4rem}
   .field input{
-    width:100%;padding:.9rem 1rem;border:none;border-bottom:1px solid var(--agua-prof);
-    background:transparent;font-family:inherit;font-size:1.15rem;
-    color:var(--tinta);text-align:center;letter-spacing:.18em;outline:none;transition:border-color .4s;
+    width:100%;padding:.9rem 1rem;border:none;
+    border-bottom:1px solid var(--bronce-osc);
+    background:transparent;font-family:'EB Garamond',serif;font-size:1.2rem;
+    color:var(--tinta);text-align:center;letter-spacing:.15em;outline:none;
+    transition:border-color .4s;
   }
-  .field input::placeholder{color:#7a8a8a;font-style:italic;letter-spacing:.05em}
-  .field input:focus{border-color:var(--dorado)}
+  .field input::placeholder{color:#9a8a6a;font-style:italic;letter-spacing:.18em;font-size:.95rem}
+  .field input:focus{border-color:var(--agua-prof)}
   .btn{
-    background:var(--agua-prof);color:var(--crema-claro);border:none;
-    padding:.85rem 2.5rem;font-family:'Cormorant SC',serif;font-size:1rem;
-    letter-spacing:.28em;cursor:pointer;transition:all .5s ease;border-radius:1px;
+    background:linear-gradient(180deg,#3d6b8a 0%,#2a4e6a 100%);
+    color:#f7eed8;border:1px solid rgba(220,184,104,0.5);
+    padding:.8rem 2.3rem;font-family:'Cormorant SC',serif;
+    font-size:.92rem;letter-spacing:.32em;cursor:pointer;
+    transition:all .5s ease;border-radius:1px;
+    box-shadow:0 8px 24px rgba(42,78,106,0.45);
   }
-  .btn:hover{background:var(--dorado);color:var(--tinta);letter-spacing:.34em}
-  .err{color:#9a4040;font-style:italic;font-size:.95rem;margin-top:1rem;min-height:1.2em}
-  #app{position:fixed;inset:0;display:none;flex-direction:column;opacity:0;transition:opacity 1.4s ease}
+  .btn:hover{
+    background:linear-gradient(180deg,#c69a4a 0%,#a87838 100%);
+    border-color:rgba(247,238,216,0.6);letter-spacing:.4em;
+  }
+  .err{color:#9a4040;font-style:italic;font-size:.95rem;margin-top:.9rem;min-height:1.2em;font-family:'EB Garamond',serif}
+
+  /* Esquinas del museo */
+  .museum-corner{
+    position:absolute;font-family:'Cormorant SC',serif;
+    font-size:.65rem;letter-spacing:.38em;color:rgba(60,40,15,0.55);z-index:5;
+  }
+  .mc-tl{top:2vh;left:2.5vw}
+  .mc-tr{top:2vh;right:2.5vw;text-align:right}
+  .mc-br{bottom:2vh;right:2.5vw;text-align:right}
+
+  /* ============ CELEBRATION ============ */
+  #celebration{
+    position:fixed;inset:0;z-index:150;display:none;
+    align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at center,rgba(247,238,216,0.95) 0%,rgba(216,196,160,0.97) 100%);
+    animation:fadeIn .8s ease both;
+  }
+  #celebration.show{display:flex}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .big-yes{
+    font-family:'Pinyon Script',cursive;
+    font-size:clamp(8rem,22vw,22rem);
+    color:var(--agua-prof);
+    line-height:.9;
+    animation:yesIn 1.4s cubic-bezier(.2,.7,.3,1.4) both;
+    text-shadow:0 8px 30px rgba(42,78,106,0.4);
+  }
+  @keyframes yesIn{
+    from{opacity:0;transform:scale(0.4) rotate(-8deg)}
+    to{opacity:1;transform:scale(1) rotate(-3deg)}
+  }
+  .petals{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+  .petal{
+    position:absolute;top:-8vh;width:14px;height:16px;
+    border-radius:0 100% 0 100%;opacity:.9;
+    animation:petalFall linear forwards;
+  }
+  @keyframes petalFall{
+    0%{transform:translate(0,0) rotate(0);opacity:1}
+    50%{transform:translate(60px,55vh) rotate(360deg)}
+    100%{transform:translate(-30px,115vh) rotate(720deg);opacity:0}
+  }
+
+  /* ============ APP / MUSEO ============ */
+  #app{
+    position:fixed;inset:0;display:none;flex-direction:column;
+    opacity:0;transition:opacity 1.4s ease;background:#1a1f25;
+  }
   #app.show{display:flex;opacity:1}
-  .bg-stage{position:absolute;inset:0;z-index:0;overflow:hidden;background:#1a2535}
-  .slide-pair{position:absolute;inset:0;opacity:0;transition:opacity 3s ease-in-out}
+  .bg-stage{position:absolute;inset:0;z-index:0;overflow:hidden;background:#1a1f25}
+  .slide-pair{position:absolute;inset:0;opacity:0;transition:opacity 3.5s ease-in-out}
   .slide-pair.active{opacity:1}
   .slide-pair .layer{
     position:absolute;inset:0;background-size:cover;background-position:center;
-    animation:burns 28s ease-in-out infinite alternate;
+    animation:burns 32s ease-in-out infinite alternate;
   }
   .slide-pair .layer.water{
-    -webkit-mask-image:linear-gradient(to bottom, transparent 42%, black 60%);
-            mask-image:linear-gradient(to bottom, transparent 42%, black 60%);
+    -webkit-mask-image:linear-gradient(to bottom,transparent 42%,black 60%);
+            mask-image:linear-gradient(to bottom,transparent 42%,black 60%);
     filter:url(#waterShimmer);
   }
+  @keyframes burns{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(-1.5%,-1%)}}
   .bg-stage::after{
     content:"";position:absolute;inset:0;
-    background:linear-gradient(180deg, rgba(20,30,40,0.32) 0%, rgba(20,30,40,0.55) 100%);
+    background:linear-gradient(180deg,rgba(20,25,35,0.42) 0%,rgba(20,25,35,0.65) 100%);
     pointer-events:none;
   }
+
+  /* niebla / nenúfares flotando */
   .lilies{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
   .lily{
     position:absolute;border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, var(--rosa), var(--lavanda) 60%, transparent 78%);
-    opacity:.45;filter:blur(1.5px);animation:drift linear infinite;
+    background:radial-gradient(circle at 35% 35%,var(--rosa-cl),var(--lavanda) 60%,transparent 78%);
+    opacity:.4;filter:blur(2px);animation:drift linear infinite;
   }
-  @keyframes drift{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(120vw,-30vh) rotate(360deg)}}
+  @keyframes drift{
+    0%{transform:translate(0,0) rotate(0)}
+    100%{transform:translate(120vw,-30vh) rotate(360deg)}
+  }
+
   header{
-    position:relative;z-index:3;padding:1.5rem 2.5rem;
+    position:relative;z-index:3;padding:1.6rem 2.5rem;
     display:flex;align-items:center;justify-content:space-between;
-    background:linear-gradient(180deg, rgba(251,246,232,0.94) 0%, rgba(251,246,232,0.72) 100%);
-    border-bottom:1px solid rgba(198,154,74,0.4);backdrop-filter:blur(8px);
+    background:linear-gradient(180deg,rgba(247,238,216,0.96) 0%,rgba(247,238,216,0.78) 100%);
+    border-bottom:1px solid rgba(184,146,74,0.4);
+    backdrop-filter:blur(10px);
   }
-  header .brand{display:flex;align-items:baseline;gap:.7rem}
-  header h2{font-family:'Italianno',cursive;font-weight:400;font-size:2.6rem;color:var(--agua-prof);line-height:1}
-  header .sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--tinta);opacity:.65;font-size:.95rem}
+  header .brand{display:flex;flex-direction:column;align-items:flex-start}
+  header .brand-sigla{
+    font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.45em;
+    color:var(--bronce-osc);margin-bottom:.3rem;
+  }
+  header h2{
+    font-family:'Cinzel',serif;font-weight:500;font-size:1.7rem;
+    color:var(--agua-prof);letter-spacing:.16em;line-height:1;
+  }
+  header .sub{
+    font-family:'EB Garamond',serif;font-style:italic;
+    color:var(--tinta);opacity:.65;font-size:.9rem;margin-top:.3rem;
+  }
   .logout{
-    background:transparent;border:1px solid var(--agua-prof);
-    color:var(--agua-prof);padding:.45rem 1.3rem;cursor:pointer;
-    font-family:'Cormorant SC',serif;letter-spacing:.22em;font-size:.8rem;transition:all .4s;
+    background:transparent;border:1px solid var(--bronce-osc);
+    color:var(--bronce-osc);padding:.5rem 1.4rem;cursor:pointer;
+    font-family:'Cormorant SC',serif;letter-spacing:.32em;font-size:.72rem;
+    transition:all .4s;
   }
-  .logout:hover{background:var(--agua-prof);color:var(--crema-claro)}
-  main{position:relative;z-index:3;flex:1;overflow-y:auto;padding:2rem 2.5rem 4rem}
+  .logout:hover{background:var(--bronce-osc);color:#f7eed8}
+
+  main{position:relative;z-index:3;flex:1;overflow-y:auto;padding:2.5rem 2.5rem 6rem}
   main::-webkit-scrollbar{width:8px}
-  main::-webkit-scrollbar-track{background:rgba(245,236,217,0.2)}
-  main::-webkit-scrollbar-thumb{background:var(--agua-prof);border-radius:4px}
-  .tabs{display:flex;gap:.5rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap}
+  main::-webkit-scrollbar-track{background:rgba(247,238,216,0.15)}
+  main::-webkit-scrollbar-thumb{background:var(--bronce-osc);border-radius:4px}
+
+  .tabs{display:flex;gap:0;justify-content:center;margin-bottom:2.5rem;flex-wrap:wrap}
   .tab{
-    background:rgba(251,246,232,0.85);backdrop-filter:blur(6px);
-    border:1px solid rgba(61,107,138,0.3);padding:.7rem 2rem;cursor:pointer;
-    font-family:'Cormorant SC',serif;font-size:1rem;letter-spacing:.22em;
-    color:var(--tinta);transition:all .4s;border-radius:1px;
+    background:rgba(247,238,216,0.92);backdrop-filter:blur(8px);
+    border:1px solid rgba(122,90,42,0.4);border-right:none;
+    padding:.8rem 1.6rem;cursor:pointer;
+    font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.22em;
+    color:var(--tinta);transition:all .4s;
   }
-  .tab:hover{background:var(--niebla);transform:translateY(-2px)}
-  .tab.active{background:var(--agua-prof);color:var(--crema-claro);box-shadow:0 6px 22px rgba(61,107,138,0.45)}
-  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+  .tab:first-child{border-radius:2px 0 0 2px}
+  .tab:last-child{border-radius:0 2px 2px 0;border-right:1px solid rgba(122,90,42,0.4)}
+  .tab:hover{background:var(--pared-clara);color:var(--bronce-osc)}
+  .tab.active{
+    background:linear-gradient(180deg,#3d6b8a 0%,#2a4e6a 100%);color:#f7eed8;
+    border-color:var(--bronce-osc);
+    box-shadow:0 6px 20px rgba(42,78,106,0.5),inset 0 1px 0 rgba(247,238,216,0.25);
+  }
+
+  .toolbar{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:2rem;flex-wrap:wrap;gap:1rem;
+    padding-bottom:1.5rem;border-bottom:1px solid rgba(247,238,216,0.25);
+  }
   .toolbar .filter{
-    background:rgba(251,246,232,0.85);border:none;padding:.6rem 1rem;
-    font-family:inherit;font-size:1rem;color:var(--tinta);border-radius:1px;
-    border:1px solid rgba(61,107,138,0.25);min-width:200px;
+    background:rgba(247,238,216,0.92);border:none;padding:.65rem 1rem;
+    font-family:'EB Garamond',serif;font-size:1rem;color:var(--tinta);
+    border-radius:1px;border:1px solid rgba(122,90,42,0.3);min-width:220px;
+    font-style:italic;
   }
   .add-btn{
-    background:var(--dorado);color:var(--crema-claro);border:none;
-    padding:.7rem 1.6rem;font-family:'Cormorant SC',serif;letter-spacing:.22em;
-    font-size:.9rem;cursor:pointer;border-radius:1px;
-    box-shadow:0 6px 20px rgba(198,154,74,0.45);transition:all .4s;
+    background:linear-gradient(180deg,#dcb868 0%,#a87838 100%);
+    color:#3a2810;border:1px solid var(--bronce-osc);
+    padding:.7rem 1.7rem;font-family:'Cinzel',serif;letter-spacing:.18em;
+    font-size:.82rem;cursor:pointer;border-radius:1px;
+    box-shadow:0 6px 22px rgba(184,146,74,0.4),inset 0 1px 0 rgba(255,235,180,0.5);
+    transition:all .4s;
   }
-  .add-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(198,154,74,0.55)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.4rem}
+  .add-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(184,146,74,0.55)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.6rem}
   .item{
-    background:var(--niebla);backdrop-filter:blur(10px);
-    padding:1.5rem;border-radius:2px;border:1px solid rgba(198,154,74,0.28);
-    box-shadow:0 14px 40px rgba(20,30,40,0.28);
-    transition:all .5s ease;position:relative;animation:rise .7s ease both;
+    background:var(--niebla);backdrop-filter:blur(12px);
+    padding:1.6rem 1.5rem 1.2rem;
+    border:1px solid rgba(122,90,42,0.35);
+    box-shadow:
+      0 18px 45px rgba(20,25,35,0.32),
+      0 0 0 4px rgba(247,238,216,0.15);
+    transition:all .5s ease;position:relative;
+    animation:rise .8s ease both;
   }
-  @keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-  .item:hover{transform:translateY(-4px);box-shadow:0 22px 52px rgba(20,30,40,0.38)}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .item:hover{transform:translateY(-5px);box-shadow:0 26px 60px rgba(20,25,35,0.42)}
   .item.done{opacity:.78}
-  .item .top{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem;margin-bottom:.4rem}
-  .item h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.55rem;color:var(--agua-prof);line-height:1.2}
-  .item .badge{font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.2em;padding:.25rem .65rem;border-radius:20px;white-space:nowrap}
-  .badge.pend{background:var(--rosa);color:#7a3a48}
-  .badge.done{background:var(--salvia);color:#3a4a30}
-  .item .place{font-style:italic;color:var(--tinta);opacity:.7;font-size:.95rem;margin-bottom:.6rem}
-  .item .notes{color:var(--tinta);font-size:1rem;line-height:1.45;margin-bottom:.8rem;opacity:.85}
-  .hearts{font-size:1.1rem;letter-spacing:.1em;margin-bottom:.8rem;color:#ccc}
-  .hearts span{cursor:pointer;transition:transform .2s}
-  .hearts span:hover{transform:scale(1.2)}
-  .hearts span.on{color:#c66}
-  .actions{display:flex;gap:.5rem;justify-content:flex-end;border-top:1px solid rgba(61,107,138,0.15);padding-top:.7rem}
-  .icon-btn{
-    background:transparent;border:1px solid rgba(61,107,138,0.3);
-    padding:.35rem .8rem;cursor:pointer;font-family:'Cormorant SC',serif;
-    letter-spacing:.16em;font-size:.72rem;color:var(--agua-prof);transition:all .4s;border-radius:1px;
+
+  /* etiqueta de museo arriba de cada obra */
+  .item::before{
+    content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+    width:60px;height:6px;
+    background:linear-gradient(180deg,var(--bronce-cl) 0%,var(--bronce) 100%);
+    border-radius:0 0 3px 3px;
   }
-  .icon-btn:hover{background:var(--agua-prof);color:var(--crema-claro)}
-  .icon-btn.del:hover{background:#9a4040;border-color:#9a4040;color:var(--crema-claro)}
-  .empty{text-align:center;padding:4rem 1rem;color:var(--crema-claro);font-family:'Italianno',cursive;font-size:2rem;opacity:.95;text-shadow:0 2px 12px rgba(0,0,0,0.5)}
-  .modal-bg{position:fixed;inset:0;background:rgba(20,30,40,0.7);backdrop-filter:blur(5px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem}
-  .modal-bg.show{display:flex;animation:fade .3s}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  .modal{background:var(--crema-claro);padding:2.5rem;border-radius:3px;width:100%;max-width:500px;box-shadow:0 30px 80px rgba(0,0,0,0.5);animation:floatIn .6s cubic-bezier(.2,.8,.2,1)}
-  .modal h3{font-family:'Italianno',cursive;font-weight:400;font-size:2.3rem;color:var(--agua-prof);text-align:center;margin-bottom:1.2rem}
-  .modal label{display:block;font-family:'Cormorant SC',serif;font-size:.78rem;letter-spacing:.22em;color:var(--agua-prof);margin-bottom:.3rem;margin-top:.9rem}
-  .modal input,.modal textarea,.modal select{width:100%;padding:.7rem .9rem;border:1px solid rgba(61,107,138,0.3);font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--tinta);background:white;border-radius:1px;outline:none}
-  .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--dorado)}
-  .modal textarea{resize:vertical;min-height:75px;font-family:inherit}
-  .modal .row{display:flex;gap:1rem;margin-top:1.6rem;justify-content:flex-end}
-  @media (max-width:600px){
-    header{padding:1.2rem 1.2rem;flex-direction:column;gap:.6rem;text-align:center}
-    main{padding:1.2rem 1rem 3rem}
-    .card{padding:2.5rem 1.8rem}
-    .card h1{font-size:3.4rem}
+  .item .top{display:flex;justify-content:space-between;align-items:flex-start;gap:.7rem;margin-bottom:.5rem;padding-top:.3rem}
+  .item h3{
+    font-family:'Cinzel',serif;font-weight:500;font-size:1.15rem;
+    color:var(--agua-prof);line-height:1.2;letter-spacing:.04em;
+  }
+  .item .badge{
+    font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.26em;
+    padding:.3rem .7rem;border-radius:0;white-space:nowrap;
+    border:1px solid currentColor;
+  }
+  .badge.pend{color:#7a3a48;background:rgba(232,184,196,0.4)}
+  .badge.done{color:#3a4a30;background:rgba(188,201,168,0.5)}
+  .item .place{
+    font-family:'EB Garamond',serif;font-style:italic;
+    color:var(--tinta);opacity:.7;font-size:.95rem;margin-bottom:.6rem;
+  }
+  .item .notes{
+    font-family:'EB Garamond',serif;
+    color:var(--tinta);font-size:1rem;line-height:1.5;margin-bottom:.9rem;opacity:.88;
+  }
+  .hearts{font-size:1.1rem;letter-spacing:.12em;margin-bottom:.9rem;color:#bbb}
+  .hearts span{cursor:pointer;transition:transform .2s}
+  .hearts span:hover{transform:scale(1.25)}
+  .hearts span.on{color:#c66}
+  .actions{
+    display:flex;gap:.4rem;justify-content:flex-end;
+    border-top:1px solid rgba(122,90,42,0.18);padding-top:.7rem;
+  }
+  .icon-btn{
+    background:transparent;border:1px solid rgba(122,90,42,0.35);
+    padding:.4rem .9rem;cursor:pointer;
+    font-family:'Cormorant SC',serif;letter-spacing:.2em;font-size:.68rem;
+    color:var(--bronce-osc);transition:all .4s;border-radius:0;
+  }
+  .icon-btn:hover{background:var(--bronce-osc);color:#f7eed8}
+  .icon-btn.del:hover{background:#9a4040;border-color:#9a4040;color:#f7eed8}
+
+  .empty{
+    text-align:center;padding:5rem 1rem;color:#f7eed8;
+    font-family:'Pinyon Script',cursive;font-size:2.4rem;opacity:.95;
+    text-shadow:0 2px 14px rgba(0,0,0,0.55);
+  }
+
+  /* ============ ROCOLA ============ */
+  .rocola{
+    position:fixed;bottom:1.5rem;right:1.5rem;z-index:30;
+    transition:all .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .rocola-btn{
+    width:62px;height:62px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#dcb868 0%,#a87838 60%,#5a3a18 100%);
+    border:2px solid #3a2810;color:#2a1a08;cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,240,200,0.4);
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .5s;animation:vinyl-spin 6s linear infinite;
+  }
+  .rocola-btn:hover{transform:scale(1.08)}
+  @keyframes vinyl-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .rocola-panel{
+    position:absolute;bottom:74px;right:0;width:340px;
+    background:linear-gradient(180deg,#3a2810 0%,#1f1408 100%);
+    border:2px solid var(--bronce);border-radius:6px;
+    padding:1rem;opacity:0;transform:translateY(10px) scale(.95);
+    pointer-events:none;transition:all .4s;
+    box-shadow:0 25px 60px rgba(0,0,0,0.6),inset 0 1px 0 rgba(220,184,104,0.4);
+  }
+  .rocola.open .rocola-panel{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+  .rocola.open .rocola-btn{animation:none;transform:rotate(-90deg)}
+  .rocola-label{
+    font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.4em;
+    color:var(--bronce-cl);text-align:center;margin-bottom:.7rem;
+  }
+  .rocola-label::before,.rocola-label::after{content:"·";margin:0 .5em}
+  .rocola-frame{
+    background:#000;border-radius:4px;overflow:hidden;
+    box-shadow:inset 0 0 20px rgba(0,0,0,0.6);
+  }
+  .rocola-frame iframe{display:block;width:100%;height:152px;border:0}
+  .rocola-empty{
+    color:#dcb868;font-family:'EB Garamond',serif;font-style:italic;
+    text-align:center;padding:2rem 1rem;font-size:.95rem;line-height:1.5;
+  }
+
+  /* Modal */
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(20,25,35,0.78);backdrop-filter:blur(6px);
+    z-index:80;display:none;align-items:center;justify-content:center;padding:1rem;
+  }
+  .modal-bg.show{display:flex;animation:fadeIn .3s}
+  .modal{
+    background:var(--pared-clara);padding:2.6rem;border-radius:2px;
+    width:100%;max-width:520px;
+    box-shadow:0 35px 80px rgba(0,0,0,0.55),0 0 0 1px var(--bronce-osc),0 0 0 8px rgba(247,238,216,0.2);
+    animation:floatInModal .55s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes floatInModal{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .modal h3{
+    font-family:'Cinzel',serif;font-weight:500;font-size:1.3rem;
+    color:var(--agua-prof);text-align:center;margin-bottom:1.4rem;letter-spacing:.18em;
+  }
+  .modal label{
+    display:block;font-family:'Cormorant SC',serif;font-size:.7rem;
+    letter-spacing:.32em;color:var(--bronce-osc);margin-bottom:.35rem;margin-top:1rem;
+  }
+  .modal input,.modal textarea,.modal select{
+    width:100%;padding:.75rem .9rem;border:1px solid rgba(122,90,42,0.35);
+    font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--tinta);
+    background:white;border-radius:1px;outline:none;
+  }
+  .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--bronce-osc)}
+  .modal textarea{resize:vertical;min-height:80px;font-family:inherit}
+  .modal .row{display:flex;gap:1rem;margin-top:1.8rem;justify-content:flex-end}
+
+  @media (max-width:680px){
+    .frame-outer{padding:18px}
+    .card{padding:2rem 1.6rem}
+    .proposal{font-size:2.6rem}
+    .placa{font-size:.65rem;padding:.65rem 1.2rem}
+    header{padding:1.2rem;flex-direction:column;gap:.7rem;text-align:center}
+    header .brand{align-items:center}
+    main{padding:1.5rem 1rem 5rem}
+    .tab{font-size:.65rem;padding:.6rem 1rem;letter-spacing:.15em}
+    .rocola-panel{width:280px}
+    .museum-corner{display:none}
   }
 </style>
 </head>
@@ -220,276 +484,351 @@
 <svg style="position:absolute;width:0;height:0" aria-hidden="true">
   <defs>
     <filter id="waterShimmer" x="0%" y="0%" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.014 0.028" numOctaves="2" seed="3" result="noise">
-        <animate attributeName="baseFrequency" dur="22s"
-          values="0.014 0.028; 0.018 0.034; 0.014 0.028" repeatCount="indefinite"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.026" numOctaves="2" seed="5" result="noise">
+        <animate attributeName="baseFrequency" dur="24s" values="0.013 0.026; 0.018 0.034; 0.013 0.026" repeatCount="indefinite"/>
       </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </defs>
 </svg>
 
-<div class="canvas-grain"></div>
+<div class="grain"></div>
+<div class="petals" id="petals"></div>
 
+<!-- ============ LOGIN ============ -->
 <section id="login">
-  <div class="bg-static"></div>
-  <div class="bg-water"></div>
+  <div class="museum-corner mc-tl">GALERIE GIVERNY</div>
+  <div class="museum-corner mc-tr">SALON PRIVÉ · 1899</div>
+  <div class="museum-corner mc-br">— ENTRÉE LIBRE —</div>
+
+  <div class="painting">
+    <div class="frame-outer">
+      <div class="frame-inner">
+        <div class="bg-static"></div>
+        <div class="bg-water"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="placa">
+    CLAUDE&nbsp;MONET &nbsp;·&nbsp; 1840–1926<br>
+    <em>Le Bassin aux Nymphéas</em><br>
+    1899 &nbsp;·&nbsp; Huile sur toile
+  </div>
+
   <div class="card">
-    <div class="sigla">CLAUDE MONET</div>
-    <h1>Giverny</h1>
-    <div class="ornament">&middot; &middot; &middot;</div>
-    <p class="lead">"No pinto la naturaleza, sino el aire que la rodea,<br>la luz, la atmósfera, lo intangible."<span class="sig">— C. M.</span></p>
+    <div class="sigla-top">UNE QUESTION</div>
+    <h1 class="proposal">¿Querés ser<br>mi novia<span class="acc">?</span></h1>
+    <div class="ornament">✦ ✦ ✦</div>
+    <p class="hint">susurra una respuesta y entrá al jardín</p>
     <form id="loginForm">
       <div class="field">
-        <input type="password" id="pwd" placeholder="palabra clave" autocomplete="off" autofocus />
+        <input type="text" id="pwd" placeholder="sí · ok · quiero · enter" autocomplete="off" autofocus />
       </div>
-      <button type="submit" class="btn">Ingresar</button>
+      <button type="submit" class="btn">Decir sí</button>
       <div class="err" id="err"></div>
     </form>
   </div>
 </section>
 
+<!-- ============ CELEBRACIÓN ============ -->
+<section id="celebration">
+  <div class="big-yes">Sí.</div>
+</section>
+
+<!-- ============ APP ============ -->
 <section id="app">
   <div class="bg-stage" id="bgStage"></div>
   <div class="lilies" id="lilies"></div>
+
   <header>
     <div class="brand">
-      <h2>Nuestro Atelier</h2>
-      <span class="sub">— planes, lugares y mesas para compartir</span>
+      <div class="brand-sigla">— MUSÉE PRIVÉ —</div>
+      <h2>GALERIE GIVERNY</h2>
+      <div class="sub">collection partagée · nos tables, lieux et projets</div>
     </div>
-    <button class="logout" id="logoutBtn">Salir</button>
+    <button class="logout" id="logoutBtn">— Sortir</button>
   </header>
+
   <main>
     <div class="tabs">
-      <button class="tab active" data-cat="restoran">Restoranes</button>
-      <button class="tab" data-cat="lugar">Lugares</button>
-      <button class="tab" data-cat="plan">Planes</button>
+      <button class="tab active" data-cat="restoran">SALLE&nbsp;I · Tables</button>
+      <button class="tab" data-cat="lugar">SALLE&nbsp;II · Lieux</button>
+      <button class="tab" data-cat="plan">SALLE&nbsp;III · Projets</button>
     </div>
     <div class="toolbar">
       <select class="filter" id="statusFilter">
-        <option value="all">Todos los estados</option>
-        <option value="pend">Pendientes</option>
-        <option value="done">Visitados / hechos</option>
+        <option value="all">— tout afficher</option>
+        <option value="pend">à découvrir</option>
+        <option value="done">visités</option>
       </select>
-      <button class="add-btn" id="addBtn">+ Agregar</button>
+      <button class="add-btn" id="addBtn">+ Ajouter une œuvre</button>
     </div>
     <div class="grid" id="grid"></div>
   </main>
+
+  <!-- ROCOLA -->
+  <div class="rocola" id="rocola">
+    <button class="rocola-btn" id="rocolaBtn" aria-label="rocola">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+        <path d="M12 4 A8 8 0 0 1 20 12"/>
+        <path d="M12 8 A4 4 0 0 1 16 12"/>
+      </svg>
+    </button>
+    <div class="rocola-panel" id="rocolaPanel">
+      <div class="rocola-label">AUDIO-GUIDE</div>
+      <div class="rocola-frame" id="rocolaFrame"></div>
+    </div>
+  </div>
 </section>
 
+<!-- ============ MODAL ============ -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3 id="modalTitle">Nueva pincelada</h3>
+    <h3 id="modalTitle">NOUVELLE ŒUVRE</h3>
     <form id="itemForm">
       <input type="hidden" id="itemId" />
-      <label>Nombre</label>
+      <label>Nom</label>
       <input type="text" id="fName" required />
-      <label>Categoria</label>
+      <label>Salle</label>
       <select id="fCat">
-        <option value="restoran">Restoran</option>
-        <option value="lugar">Lugar</option>
-        <option value="plan">Plan</option>
+        <option value="restoran">Tables (restaurants)</option>
+        <option value="lugar">Lieux</option>
+        <option value="plan">Projets</option>
       </select>
-      <label>Lugar / Direccion</label>
+      <label>Lieu / adresse</label>
       <input type="text" id="fPlace" placeholder="Palermo, Buenos Aires..." />
-      <label>Notas</label>
-      <textarea id="fNotes" placeholder="que nos gusto, cuando, con quien..."></textarea>
-      <label>Estado</label>
+      <label>Notes</label>
+      <textarea id="fNotes" placeholder="qué nos gustó, cuándo, con quién..."></textarea>
+      <label>État</label>
       <select id="fStatus">
-        <option value="pend">Pendiente</option>
-        <option value="done">Visitado / hecho</option>
+        <option value="pend">à découvrir</option>
+        <option value="done">visité</option>
       </select>
       <div class="row">
-        <button type="button" class="icon-btn" id="cancelBtn">Cancelar</button>
-        <button type="submit" class="btn">Guardar</button>
+        <button type="button" class="icon-btn" id="cancelBtn">Annuler</button>
+        <button type="submit" class="btn">Enregistrer</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-const loginEl = document.getElementById('login');
-const appEl   = document.getElementById('app');
-const errEl   = document.getElementById('err');
+/* ============================================================
+   CONFIG — PEGÁ TU LINK DE SPOTIFY ACÁ ABAJO
+   (puede ser playlist, track o album: copia el link de "compartir")
+   ============================================================ */
+const SPOTIFY_URL = 'https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ';
+/* ============================================================ */
 
-document.getElementById('loginForm').addEventListener('submit', e => {
+const PASSWORDS = ['si','sí','ok','okay','quiero','enter','fortuna','dale','obvio'];
+const normalize = s => s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const NORM_PWDS = PASSWORDS.map(normalize);
+
+const loginEl=document.getElementById('login'),appEl=document.getElementById('app'),
+      celEl=document.getElementById('celebration'),errEl=document.getElementById('err');
+
+document.getElementById('loginForm').addEventListener('submit',e=>{
   e.preventDefault();
-  const v = document.getElementById('pwd').value.trim().toLowerCase();
-  if (v === 'fortuna') { sessionStorage.setItem('giverny_in','1'); enter(); }
-  else {
-    errEl.textContent = 'La palabra no abre esta puerta...';
+  const v=normalize(document.getElementById('pwd').value);
+  if(NORM_PWDS.includes(v)){sessionStorage.setItem('giverny_in','1');celebrate();}
+  else{
+    errEl.textContent='intentá de nuevo, mi amor...';
     document.getElementById('pwd').value='';
-    setTimeout(()=>errEl.textContent='', 2800);
+    setTimeout(()=>errEl.textContent='',3200);
   }
 });
-document.getElementById('logoutBtn').addEventListener('click', ()=>{ sessionStorage.removeItem('giverny_in'); location.reload(); });
+
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  sessionStorage.removeItem('giverny_in');location.reload();
+});
+
+function celebrate(){
+  loginEl.classList.add('gone');
+  celEl.classList.add('show');
+  rainPetals(80);
+  setTimeout(()=>{
+    celEl.style.transition='opacity 1.2s ease';
+    celEl.style.opacity='0';
+    setTimeout(()=>{
+      loginEl.style.display='none';
+      celEl.style.display='none';
+      enter();
+    },1200);
+  },3500);
+}
+
+function rainPetals(n){
+  const c=document.getElementById('petals');
+  const colors=['#e8b8c4','#c98a8a','#dba8b8','#f0c8d0','#b89cb0','#dcb868'];
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');p.className='petal';
+    p.style.left=Math.random()*100+'%';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.width=(8+Math.random()*10)+'px';
+    p.style.height=(10+Math.random()*10)+'px';
+    p.style.animationDelay=(Math.random()*2.5)+'s';
+    p.style.animationDuration=(4+Math.random()*4)+'s';
+    p.style.opacity=.6+Math.random()*.4;
+    c.appendChild(p);
+  }
+  setTimeout(()=>c.innerHTML='',10000);
+}
 
 function enter(){
-  loginEl.classList.add('gone');
-  setTimeout(()=>{
-    loginEl.style.display='none';
-    appEl.classList.add('show');
-    initBg(); initLilies(); render();
-  }, 1300);
+  appEl.classList.add('show');
+  initBg();initLilies();initRocola();render();
 }
-if (sessionStorage.getItem('giverny_in')==='1') enter();
 
-const paintings = [
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1600px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Claude_Monet_-_Le_Bassin_Aux_Nymph%C3%A9as_-_Google_Art_Project.jpg/1600px-Claude_Monet_-_Le_Bassin_Aux_Nymph%C3%A9as_-_Google_Art_Project.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Claude_Monet_The_Cliff_Walk_at_Pourville_1882.jpg/1600px-Claude_Monet_The_Cliff_Walk_at_Pourville_1882.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Claude_Monet_-_Meule_-_Google_Art_Project.jpg/1600px-Claude_Monet_-_Meule_-_Google_Art_Project.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1600px-Monet_-_Impression%2C_Sunrise.jpg'
+if(sessionStorage.getItem('giverny_in')==='1'){
+  loginEl.style.display='none';enter();
+}
+
+/* ===== fondos dinámicos ===== */
+const paintings=[
+  {url:'nenufares.jpg',grad:'linear-gradient(180deg,#7a9aa8 0%,#5a7a8a 40%,#3a5a6a 100%)'},
+  {url:'amanecer.jpg',grad:'linear-gradient(180deg,#d8a890 0%,#a87890 35%,#5a6a8a 70%,#3a4a5a 100%)'},
+  {url:'almiares.jpg',grad:'linear-gradient(180deg,#c8a868 0%,#a87838 50%,#5a4a3a 100%)'},
+  {url:'puente.jpg', grad:'linear-gradient(180deg,#6a8a6a 0%,#4a6a7a 50%,#2a4a5a 100%)'}
 ];
-let bgIdx = 0;
+let bgIdx=0;
 function initBg(){
-  const stage = document.getElementById('bgStage');
-  paintings.forEach((url,i)=>{
-    const pair = document.createElement('div');
-    pair.className = 'slide-pair' + (i===0?' active':'');
-    const back = document.createElement('div');
-    back.className = 'layer';
-    back.style.backgroundImage = "url('" + url + "')";
-    back.style.animationDelay = (i*-3)+'s';
-    const water = document.createElement('div');
-    water.className = 'layer water';
-    water.style.backgroundImage = "url('" + url + "')";
-    water.style.animationDelay = (i*-3)+'s';
-    pair.appendChild(back); pair.appendChild(water);
+  const stage=document.getElementById('bgStage');
+  paintings.forEach((p,i)=>{
+    const pair=document.createElement('div');
+    pair.className='slide-pair'+(i===0?' active':'');
+    const back=document.createElement('div');back.className='layer';
+    back.style.backgroundImage="url('"+p.url+"'),"+p.grad;
+    back.style.animationDelay=(i*-3)+'s';
+    const water=document.createElement('div');water.className='layer water';
+    water.style.backgroundImage="url('"+p.url+"'),"+p.grad;
+    water.style.animationDelay=(i*-3)+'s';
+    pair.appendChild(back);pair.appendChild(water);
     stage.appendChild(pair);
   });
   setInterval(()=>{
-    const pairs = stage.querySelectorAll('.slide-pair');
+    const pairs=stage.querySelectorAll('.slide-pair');
     pairs[bgIdx].classList.remove('active');
-    bgIdx = (bgIdx+1) % pairs.length;
+    bgIdx=(bgIdx+1)%pairs.length;
     pairs[bgIdx].classList.add('active');
-  }, 9000);
+  },10000);
 }
 
 function initLilies(){
-  const c = document.getElementById('lilies');
-  for (let i=0;i<14;i++){
-    const l = document.createElement('div'); l.className='lily';
-    const size = 20 + Math.random()*60;
-    l.style.width = size+'px'; l.style.height = size+'px';
-    l.style.left = (-10 + Math.random()*30)+'%';
-    l.style.top  = (60 + Math.random()*60)+'%';
-    l.style.animationDuration = (40 + Math.random()*60)+'s';
-    l.style.animationDelay = (-Math.random()*60)+'s';
-    l.style.opacity = .25 + Math.random()*.35;
+  const c=document.getElementById('lilies');
+  for(let i=0;i<14;i++){
+    const l=document.createElement('div');l.className='lily';
+    const size=20+Math.random()*60;
+    l.style.width=size+'px';l.style.height=size+'px';
+    l.style.left=(-10+Math.random()*30)+'%';l.style.top=(60+Math.random()*60)+'%';
+    l.style.animationDuration=(40+Math.random()*60)+'s';l.style.animationDelay=(-Math.random()*60)+'s';
+    l.style.opacity=.2+Math.random()*.3;
     c.appendChild(l);
   }
 }
 
-const KEY = 'giverny_items_v2';
-let items = JSON.parse(localStorage.getItem(KEY) || 'null') || [
-  { id:uid(), name:'Don Julio', cat:'restoran', place:'Palermo, BA', notes:'Parrilla clasica, anotada hace meses.', status:'pend', hearts:0 },
-  { id:uid(), name:'Showcase', cat:'restoran', place:'Buenos Aires', notes:'Para una noche especial.', status:'pend', hearts:0 },
-  { id:uid(), name:'Kalis', cat:'restoran', place:'Buenos Aires', notes:'Probar la cocina.', status:'pend', hearts:0 },
-  { id:uid(), name:'Museo Malba', cat:'lugar', place:'Av. Figueroa Alcorta 3415, CABA', notes:'Coleccion de arte latinoamericano + cafe.', status:'pend', hearts:0 },
-  { id:uid(), name:'Bosques de Palermo al atardecer', cat:'lugar', place:'CABA', notes:'Caminata + mate.', status:'pend', hearts:3 },
-  { id:uid(), name:'Maraton de peliculas francesas', cat:'plan', place:'En casa', notes:'Amelie, Le Fabuleux Destin, La Vie en Rose.', status:'done', hearts:5 }
+/* ===== ROCOLA ===== */
+function initRocola(){
+  const frame=document.getElementById('rocolaFrame');
+  const m=SPOTIFY_URL.match(/spotify\.com\/(playlist|track|album|episode|artist)\/([a-zA-Z0-9]+)/);
+  if(m){
+    const iframe=document.createElement('iframe');
+    iframe.src='https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator&theme=0';
+    iframe.allow='encrypted-media; clipboard-write; picture-in-picture';
+    iframe.loading='lazy';
+    frame.appendChild(iframe);
+  } else {
+    frame.innerHTML='<div class="rocola-empty">pegá tu link de Spotify en el código (constante SPOTIFY_URL)</div>';
+  }
+  document.getElementById('rocolaBtn').addEventListener('click',()=>{
+    document.getElementById('rocola').classList.toggle('open');
+  });
+}
+
+/* ===== ITEMS ===== */
+const KEY='giverny_items_v3';
+let items=JSON.parse(localStorage.getItem(KEY)||'null')||[
+  {id:uid(),name:'Don Julio',cat:'restoran',place:'Palermo, BA',notes:'Parrilla clasica, anotada hace meses.',status:'pend',hearts:0},
+  {id:uid(),name:'Showcase',cat:'restoran',place:'Buenos Aires',notes:'Para una noche especial.',status:'pend',hearts:0},
+  {id:uid(),name:'Kalis',cat:'restoran',place:'Buenos Aires',notes:'Probar la cocina.',status:'pend',hearts:0},
+  {id:uid(),name:'Museo Malba',cat:'lugar',place:'Av. Figueroa Alcorta 3415, CABA',notes:'Coleccion de arte latinoamericano + cafe.',status:'pend',hearts:0},
+  {id:uid(),name:'Bosques de Palermo al atardecer',cat:'lugar',place:'CABA',notes:'Caminata + mate.',status:'pend',hearts:3}
 ];
-function uid(){ return Math.random().toString(36).slice(2,9) }
-function save(){ localStorage.setItem(KEY, JSON.stringify(items)) }
+function uid(){return Math.random().toString(36).slice(2,9)}
+function save(){localStorage.setItem(KEY,JSON.stringify(items))}
 
-let currentCat = 'restoran';
-let currentStatus = 'all';
-
+let currentCat='restoran',currentStatus='all';
 document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click', ()=>{
+  t.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    currentCat = t.dataset.cat;
-    render();
+    t.classList.add('active');currentCat=t.dataset.cat;render();
   });
 });
-document.getElementById('statusFilter').addEventListener('change', e=>{ currentStatus = e.target.value; render(); });
+document.getElementById('statusFilter').addEventListener('change',e=>{currentStatus=e.target.value;render();});
 
 function render(){
-  const grid = document.getElementById('grid');
-  const list = items.filter(i=>i.cat===currentCat).filter(i=>currentStatus==='all'||i.status===currentStatus);
-  if (!list.length){
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">un lienzo en blanco esperando la primera pincelada...</div>';
-    return;
-  }
-  grid.innerHTML = list.map(i=>`
+  const grid=document.getElementById('grid');
+  const list=items.filter(i=>i.cat===currentCat).filter(i=>currentStatus==='all'||i.status===currentStatus);
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">un lienzo en blanco esperando la primera pincelada...</div>';return;}
+  grid.innerHTML=list.map(i=>`
     <div class="item ${i.status==='done'?'done':''}">
       <div class="top">
         <h3>${esc(i.name)}</h3>
-        <span class="badge ${i.status==='done'?'done':'pend'}">${i.status==='done'?'visitado':'pendiente'}</span>
+        <span class="badge ${i.status==='done'?'done':'pend'}">${i.status==='done'?'VISITÉ':'À DÉCOUVRIR'}</span>
       </div>
       ${i.place?`<div class="place">${esc(i.place)}</div>`:''}
       ${i.notes?`<div class="notes">${esc(i.notes)}</div>`:''}
-      <div class="hearts" data-id="${i.id}">
-        ${[1,2,3,4,5].map(n=>`<span class="${n<=i.hearts?'on':''}" data-n="${n}">&hearts;</span>`).join('')}
-      </div>
+      <div class="hearts" data-id="${i.id}">${[1,2,3,4,5].map(n=>`<span class="${n<=i.hearts?'on':''}" data-n="${n}">&hearts;</span>`).join('')}</div>
       <div class="actions">
-        <button class="icon-btn" onclick="toggleStatus('${i.id}')">${i.status==='done'?'Pendiente':'Visitado'}</button>
-        <button class="icon-btn" onclick="edit('${i.id}')">Editar</button>
-        <button class="icon-btn del" onclick="del('${i.id}')">Borrar</button>
+        <button class="icon-btn" onclick="toggleStatus('${i.id}')">${i.status==='done'?'À DÉCOUVRIR':'VISITÉ'}</button>
+        <button class="icon-btn" onclick="edit('${i.id}')">EDITER</button>
+        <button class="icon-btn del" onclick="del('${i.id}')">EFFACER</button>
       </div>
-    </div>
-  `).join('');
-
+    </div>`).join('');
   document.querySelectorAll('.hearts').forEach(h=>{
     h.querySelectorAll('span').forEach(s=>{
-      s.addEventListener('click', ()=>{
-        const id = h.dataset.id, n = +s.dataset.n;
-        const it = items.find(x=>x.id===id);
-        it.hearts = it.hearts===n ? n-1 : n;
-        save(); render();
+      s.addEventListener('click',()=>{
+        const id=h.dataset.id,n=+s.dataset.n;
+        const it=items.find(x=>x.id===id);
+        it.hearts=it.hearts===n?n-1:n;save();render();
       });
     });
   });
 }
-function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+function esc(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-window.toggleStatus = id => {
-  const it = items.find(x=>x.id===id);
-  it.status = it.status==='done' ? 'pend' : 'done';
-  save(); render();
-};
-window.del = id => {
-  if (!confirm('Borrar esta pincelada?')) return;
-  items = items.filter(x=>x.id!==id);
-  save(); render();
-};
-window.edit = id => openModal(items.find(x=>x.id===id));
+window.toggleStatus=id=>{const it=items.find(x=>x.id===id);it.status=it.status==='done'?'pend':'done';save();render();};
+window.del=id=>{if(!confirm('¿Quitar esta obra de la colección?'))return;items=items.filter(x=>x.id!==id);save();render();};
+window.edit=id=>openModal(items.find(x=>x.id===id));
 
-const modalBg = document.getElementById('modalBg');
-document.getElementById('addBtn').addEventListener('click', ()=>openModal());
-document.getElementById('cancelBtn').addEventListener('click', closeModal);
-modalBg.addEventListener('click', e=>{ if(e.target===modalBg) closeModal() });
+const modalBg=document.getElementById('modalBg');
+document.getElementById('addBtn').addEventListener('click',()=>openModal());
+document.getElementById('cancelBtn').addEventListener('click',closeModal);
+modalBg.addEventListener('click',e=>{if(e.target===modalBg)closeModal()});
 
 function openModal(it){
-  document.getElementById('modalTitle').textContent = it ? 'Editar pincelada' : 'Nueva pincelada';
-  document.getElementById('itemId').value = it?.id || '';
-  document.getElementById('fName').value = it?.name || '';
-  document.getElementById('fCat').value  = it?.cat  || currentCat;
-  document.getElementById('fPlace').value= it?.place|| '';
-  document.getElementById('fNotes').value= it?.notes|| '';
-  document.getElementById('fStatus').value= it?.status || 'pend';
+  document.getElementById('modalTitle').textContent=it?'EDITER L\'ŒUVRE':'NOUVELLE ŒUVRE';
+  document.getElementById('itemId').value=it?.id||'';
+  document.getElementById('fName').value=it?.name||'';
+  document.getElementById('fCat').value=it?.cat||currentCat;
+  document.getElementById('fPlace').value=it?.place||'';
+  document.getElementById('fNotes').value=it?.notes||'';
+  document.getElementById('fStatus').value=it?.status||'pend';
   modalBg.classList.add('show');
 }
-function closeModal(){ modalBg.classList.remove('show') }
+function closeModal(){modalBg.classList.remove('show')}
 
-document.getElementById('itemForm').addEventListener('submit', e=>{
+document.getElementById('itemForm').addEventListener('submit',e=>{
   e.preventDefault();
-  const id = document.getElementById('itemId').value;
-  const data = {
-    name:  document.getElementById('fName').value.trim(),
-    cat:   document.getElementById('fCat').value,
-    place: document.getElementById('fPlace').value.trim(),
-    notes: document.getElementById('fNotes').value.trim(),
-    status:document.getElementById('fStatus').value
-  };
-  if (id){ Object.assign(items.find(x=>x.id===id), data); }
-  else { items.unshift({ id:uid(), hearts:0, ...data }); }
-  save(); closeModal();
-  document.querySelectorAll('.tab').forEach(t=>{ t.classList.toggle('active', t.dataset.cat===data.cat); });
-  currentCat = data.cat;
-  render();
+  const id=document.getElementById('itemId').value;
+  const data={name:document.getElementById('fName').value.trim(),cat:document.getElementById('fCat').value,place:document.getElementById('fPlace').value.trim(),notes:document.getElementById('fNotes').value.trim(),status:document.getElementById('fStatus').value};
+  if(id){Object.assign(items.find(x=>x.id===id),data);}
+  else{items.unshift({id:uid(),hearts:0,...data});}
+  save();closeModal();
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('active',t.dataset.cat===data.cat);});
+  currentCat=data.cat;render();
 });
 </script>
 </body>
