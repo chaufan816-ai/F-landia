@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,700;1,900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+SC:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <style>
   :root{
     --verde:#8fb89a;--verde-prof:#4a7060;--rosa-coral:#d4a0a8;
@@ -22,7 +23,7 @@
     background:#1a2828;-webkit-font-smoothing:antialiased;
   }
 
-  /* lienzo + pinceladas */
+  /* texturas: lienzo + pinceladas */
   .grain{
     position:fixed;inset:0;pointer-events:none;z-index:400;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.9  0 0 0 0 0.78  0 0 0 0.16 0'/></filter><rect width='280' height='280' filter='url(%23n)' opacity='0.7'/></svg>");
@@ -63,9 +64,7 @@
     font-family:'Playfair Display',serif;font-weight:900;font-style:normal;
     font-size:clamp(3rem,8vw,7rem);line-height:.95;letter-spacing:-.015em;
     color:var(--crema-cl);margin:0 0 1.4rem;
-    text-shadow:
-      0 5px 30px rgba(0,0,0,0.6),
-      0 1px 0 rgba(255,255,255,0.08);
+    text-shadow:0 5px 30px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.08);
     filter:url(#paint);
     animation:fadeUp 1.8s cubic-bezier(.2,.8,.2,1) both .3s;
   }
@@ -259,6 +258,13 @@
   }
   .rocola-btn:hover{transform:scale(1.08)}
   @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .rocola.pulse .rocola-btn{
+    animation:spin 8s linear infinite, pulseGlow 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseGlow{
+    0%,100%{box-shadow:0 12px 30px rgba(0,0,0,0.4),inset 0 2px 0 rgba(255,255,255,0.3),0 0 0 0 rgba(232,184,196,0.75)}
+    50%{box-shadow:0 12px 30px rgba(0,0,0,0.4),inset 0 2px 0 rgba(255,255,255,0.3),0 0 0 22px rgba(232,184,196,0)}
+  }
   .rocola-panel{
     position:absolute;bottom:72px;right:0;width:340px;
     background:linear-gradient(180deg,rgba(58,88,120,0.95) 0%,rgba(42,58,56,0.97) 100%);
@@ -274,7 +280,7 @@
     color:var(--crema-cl);text-align:center;margin-bottom:.7rem;opacity:.88;
   }
   .rocola-label::before,.rocola-label::after{content:"·";margin:0 .5em}
-  .rocola-frame{background:#000;border-radius:8px;overflow:hidden}
+  .rocola-frame{background:#000;border-radius:8px;overflow:hidden;min-height:80px}
   .rocola-frame iframe{display:block;width:100%;height:152px;border:0}
   .rocola-empty{
     color:var(--crema-cl);font-family:'Cormorant Garamond',serif;font-style:italic;
@@ -476,7 +482,11 @@ function rainPetals(n){
   }
   setTimeout(()=>c.innerHTML='',10000);
 }
-function enter(){appEl.classList.add('show');initLilies();initRocola();render();}
+
+function enter(){
+  appEl.classList.add('show');initLilies();initRocola();render();
+  setTimeout(tryAutoplay, 1200);
+}
 if(sessionStorage.getItem('giverny_in')==='1'){loginEl.style.display='none';enter();}
 
 function initLilies(){
@@ -492,18 +502,33 @@ function initLilies(){
   }
 }
 
+let spotifyController = null;
+window.onSpotifyIframeApiReady = (IFrameAPI) => {
+  const m = SPOTIFY_URL.match(/spotify\.com\/(playlist|track|album|episode|artist)\/([a-zA-Z0-9]+)/);
+  if(!m) return;
+  const frame = document.getElementById('rocolaFrame');
+  frame.innerHTML = '<div id="spotifyHost"></div>';
+  IFrameAPI.createController(
+    document.getElementById('spotifyHost'),
+    { uri: 'spotify:'+m[1]+':'+m[2], width: '100%', height: 152 },
+    (ctrl) => { spotifyController = ctrl; }
+  );
+};
+
 function initRocola(){
-  const frame=document.getElementById('rocolaFrame');
-  const m=SPOTIFY_URL.match(/spotify\.com\/(playlist|track|album|episode|artist)\/([a-zA-Z0-9]+)/);
-  if(m){
-    const iframe=document.createElement('iframe');
-    iframe.src='https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator&theme=0';
-    iframe.allow='encrypted-media; clipboard-write; picture-in-picture';iframe.loading='lazy';
-    frame.appendChild(iframe);
-  }
   document.getElementById('rocolaBtn').addEventListener('click',()=>{
     document.getElementById('rocola').classList.toggle('open');
+    document.getElementById('rocola').classList.remove('pulse');
   });
+}
+
+function tryAutoplay(){
+  const rocola = document.getElementById('rocola');
+  rocola.classList.add('open','pulse');
+  const tryPlay = () => { if(spotifyController){ try{spotifyController.play();}catch(e){} } };
+  tryPlay();
+  setTimeout(tryPlay, 600);
+  setTimeout(tryPlay, 1500);
 }
 
 const KEY='flandia_items_v2';
