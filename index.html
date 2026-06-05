@@ -52,15 +52,24 @@
     padding:2rem;text-align:center;
   }
   .small-label{
-    font-family:'Cormorant SC',serif;font-size:.78rem;letter-spacing:.55em;
-    color:var(--crema-cl);opacity:.85;margin-bottom:1.6rem;padding-left:.55em;
-    text-shadow:0 2px 10px rgba(0,0,0,0.5);
+    display:inline-block;
+    font-family:'Cormorant SC',serif;font-weight:500;
+    font-size:1rem;letter-spacing:.55em;
+    color:var(--crema-cl);
+    margin-bottom:1.8rem;
+    padding:.55rem 1.8rem .55rem 2.35rem;
+    background:rgba(15,25,30,0.5);
+    backdrop-filter:blur(12px) saturate(1.1);
+    border-radius:99px;
+    border:1px solid rgba(251,246,232,0.3);
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    text-shadow:0 2px 8px rgba(0,0,0,0.6);
   }
-  .small-label::before,.small-label::after{content:"·";margin:0 .9em;opacity:.6}
+  .small-label::before,.small-label::after{content:"·";margin:0 .9em;opacity:.65}
   .proposal{
     font-family:'Playfair Display',serif;font-weight:900;font-style:normal;
     font-size:clamp(3rem,8vw,7rem);line-height:.95;letter-spacing:-.015em;
-    color:var(--crema-cl);margin:0 0 1.4rem;
+    color:var(--crema-cl);margin:0 0 1.6rem;
     text-shadow:0 5px 30px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.08);
     filter:url(#paint);
     animation:fadeUp 1.8s cubic-bezier(.2,.8,.2,1) both .3s;
@@ -69,11 +78,11 @@
   .hint{
     display:inline-block;
     font-family:'Cormorant Garamond',serif;font-style:italic;
-    font-size:1.05rem;color:var(--crema-cl);
-    margin-bottom:2rem;letter-spacing:.04em;
+    font-size:1.3rem;color:var(--crema-cl);
+    margin-bottom:2.2rem;letter-spacing:.04em;
     background:rgba(15,25,30,0.5);
     backdrop-filter:blur(12px) saturate(1.1);
-    padding:.55rem 1.5rem;border-radius:99px;
+    padding:.65rem 1.8rem;border-radius:99px;
     border:1px solid rgba(251,246,232,0.3);
     box-shadow:0 8px 24px rgba(0,0,0,0.35);
     text-shadow:0 2px 8px rgba(0,0,0,0.6);
@@ -328,6 +337,8 @@
   @media (max-width:680px){
     .center{padding:1.5rem}
     .proposal{font-size:3.2rem}
+    .small-label{font-size:.85rem;letter-spacing:.45em;padding:.5rem 1.4rem .5rem 1.85rem}
+    .hint{font-size:1.05rem;padding:.55rem 1.4rem}
     header{padding:1rem 1.2rem}
     main{padding:1.2rem 1rem 5rem}
     .tabs{gap:.3rem}
